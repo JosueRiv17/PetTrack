@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Proyecto</string>
+    <string name="btnAgregar">Agregar</string>
+    <string name="txtMenM">Todo el cuidado de tus compañeros, en un solo lugar\n</string>
+    <string name="txtMisMas">Mis mascotas</string>
+</resources>
