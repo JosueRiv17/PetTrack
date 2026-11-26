@@ -1,6 +1,7 @@
 package com.example.proyecto;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,10 +18,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
 import java.util.Calendar;
 
 public class AgregarMascota extends AppCompatActivity {
@@ -31,6 +34,7 @@ public class AgregarMascota extends AppCompatActivity {
     private TextView txtContadorVacunasAgregadas, txtInfoPerfil;
 
     private String fotoSeleccionadaUri = "";
+    private Uri fotoCamaraUri = null;
     private int vacunasRegistradas = 0;
 
     private final ActivityResultLauncher<String> selectorImagenLauncher =
@@ -45,6 +49,15 @@ public class AgregarMascota extends AppCompatActivity {
                     fotoSeleccionadaUri = uri.toString();
                     ivPreviewFoto.clearColorFilter();
                     ivPreviewFoto.setImageURI(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<Uri> tomarFotoLauncher =
+            registerForActivityResult(new ActivityResultContracts.TakePicture(), tomada -> {
+                if (tomada && fotoCamaraUri != null) {
+                    fotoSeleccionadaUri = fotoCamaraUri.toString();
+                    ivPreviewFoto.clearColorFilter();
+                    ivPreviewFoto.setImageURI(fotoCamaraUri);
                 }
             });
 
@@ -81,7 +94,7 @@ public class AgregarMascota extends AppCompatActivity {
         LinearLayout btnNavInicio = findViewById(R.id.btnNavInicio);
         LinearLayout btnNavCuenta = findViewById(R.id.btnNavCuenta);
 
-        contenedorFoto.setOnClickListener(v -> selectorImagenLauncher.launch("image/*"));
+        contenedorFoto.setOnClickListener(v -> mostrarOpcionesFoto());
         btnAgregarVacuna.setOnClickListener(v -> mostrarDialogoAgregarVacuna());
         btnGuardarMascota.setOnClickListener(v -> guardarMascota(idUsuarioActual));
 
@@ -89,6 +102,39 @@ public class AgregarMascota extends AppCompatActivity {
         btnNavCuenta.setOnClickListener(v ->
                 Toast.makeText(this, "Cuenta", Toast.LENGTH_SHORT).show()
         );
+    }
+
+    private void mostrarOpcionesFoto() {
+        String[] opciones = {"Tomar foto con cámara", "Elegir de galería"};
+        new AlertDialog.Builder(this)
+                .setTitle("Foto de la mascota")
+                .setItems(opciones, (dialog, which) -> {
+                    if (which == 0) {
+                        abrirCamara();
+                    } else {
+                        selectorImagenLauncher.launch("image/*");
+                    }
+                })
+                .show();
+    }
+
+    private void abrirCamara() {
+        try {
+            File carpetaFotos = new File(getCacheDir(), "fotos_mascotas");
+            if (!carpetaFotos.exists() && !carpetaFotos.mkdirs()) {
+                Toast.makeText(this, "No se pudo crear la carpeta de fotos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            File archivoFoto = new File(carpetaFotos, "mascota_" + System.currentTimeMillis() + ".jpg");
+            fotoCamaraUri = FileProvider.getUriForFile(
+                    this,
+                    getPackageName() + ".fileprovider",
+                    archivoFoto
+            );
+            tomarFotoLauncher.launch(fotoCamaraUri);
+        } catch (Exception e) {
+            Toast.makeText(this, "No se pudo abrir la cámara", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void mostrarDialogoAgregarVacuna() {
@@ -114,7 +160,6 @@ public class AgregarMascota extends AppCompatActivity {
                 .show();
     }
 
-
     private void guardarMascota(int idUsuarioActual) {
         String nombre = etNombreMascota.getText().toString().trim();
         String raza = etRazaMascota.getText().toString().trim();
@@ -133,9 +178,15 @@ public class AgregarMascota extends AppCompatActivity {
 
         int edadAnios = 0;
         if (!TextUtils.isEmpty(anioStr)) {
-            int anioNac = Integer.parseInt(anioStr);
-            int anioActual = Calendar.getInstance().get(Calendar.YEAR);
-            edadAnios = Math.max(0, anioActual - anioNac);
+            try {
+                int anioNac = Integer.parseInt(anioStr);
+                int anioActual = Calendar.getInstance().get(Calendar.YEAR);
+                edadAnios = Math.max(0, anioActual - anioNac);
+            } catch (NumberFormatException e) {
+                etAnioNacimiento.setError("Año no válido");
+                etAnioNacimiento.requestFocus();
+                return;
+            }
         }
 
         double peso = 0.0;

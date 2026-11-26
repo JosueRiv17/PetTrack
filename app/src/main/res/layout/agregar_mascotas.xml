@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Agregar mascota"
+                android:text="@string/txtTituloAgreMat"
                 android:textColor="#1F2421"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Su historia de cuidado empieza aquí."
+                android:text="@string/txtSubTitAgregar"
                 android:textColor="#6E7772"
                 android:textSize="15sp" />
 
@@ -79,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Agrega su mejor foto"
+                    android:text="@string/txtAgregarFoto"
                     android:textColor="#1F2421"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -88,7 +88,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Opcional · JPG, PNG o WebP · Máx. 2 MB"
+                    android:text="@string/txtTipoImagen"
                     android:textColor="#7A827D"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -112,7 +112,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Conozcamos a tu mascota"
+                    android:text="@string/txtInfoMas"
                     android:textColor="#1F2421"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="Nombre *"
+                android:text="@string/txtNombre"
                 android:textColor="#2F3E38"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -134,7 +134,7 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="8dp"
                 android:background="#FFFFFF"
-                android:hint="¿Cómo se llama?"
+                android:hint="@string/txtTransNombre"
                 android:inputType="textCapWords"
                 android:paddingHorizontal="16dp"
                 android:textColor="#1F2421"
@@ -146,7 +146,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:text="Raza"
+                android:text="@string/txtRaza"
                 android:textColor="#2F3E38"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -157,7 +157,7 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="8dp"
                 android:background="#FFFFFF"
-                android:hint="Ej. Golden Retriever o mestizo"
+                android:hint="@string/txtTransRaza"
                 android:inputType="textCapSentences"
                 android:paddingHorizontal="16dp"
                 android:textColor="#1F2421"
@@ -182,7 +182,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Año de nacimiento"
+                        android:text="@string/txtNacimiento"
                         android:textColor="#2F3E38"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -252,7 +252,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="¿Está esterilizado/a?"
+                        android:text="@string/txtEstirizado1"
                         android:textColor="#1F2421"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -261,10 +261,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Un dato importante para su cuidado"
+                        android:text="@string/txtEsterilizado2"
                         android:textColor="#6E7772"
                         android:textSize="12sp" />
                 </LinearLayout>
+
+
 
                 <CheckBox
                     android:id="@+id/cbEsterilizado"
@@ -292,7 +294,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Sus vacunas"
+                    android:text="@string/txtVacunas"
                     android:textColor="#1F2421"
                     android:textSize="19sp"
                     android:textStyle="bold" />
@@ -303,7 +305,7 @@
                     android:background="#ECE8FA"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="5dp"
-                    android:text="Opcional"
+                    android:text="@string/txtOpcional"
                     android:textColor="#5B4B9E"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -313,7 +315,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Registra las dosis que ya recibió. También puedes hacerlo más adelante."
+                android:text="@string/txtVacunas2"
                 android:textColor="#6E7772"
                 android:textSize="13sp" />
 
@@ -339,7 +341,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Cada dosis cuenta"
+                    android:text="@string/txtVacunas3"
                     android:textColor="#1F2421"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -349,7 +351,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Empieza a construir su cartilla digital."
+                    android:text="@string/txtVacunas4"
                     android:textColor="#7A827D"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -377,7 +379,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Agregar vacuna"
+                    android:text="@string/btnAgregarVacuna"
                     android:textColor="#1F2421"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -420,7 +422,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
                 android:backgroundTint="#355847"
-                android:text="Guardar mascota"
+                android:text="@string/btnGuardarMascota"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
@@ -431,7 +433,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:gravity="center"
-                android:text="* Campos obligatorios · Guardado local en SQLite."
+                android:text="@string/AlertaGuardado"
                 android:textColor="#8A928D"
                 android:textSize="11sp" />
 

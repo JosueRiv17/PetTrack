@@ -3,4 +3,24 @@
     <string name="btnAgregar">Agregar</string>
     <string name="txtMenM">Todo el cuidado de tus compañeros, en un solo lugar\n</string>
     <string name="txtMisMas">Mis mascotas</string>
+    <string name="txtTituloAgreMat">Agregar mascota</string>
+    <string name="txtSubTitAgregar">Su historia comienza aqui</string>
+    <string name="txtAgregarFoto">Agregar foto</string>
+    <string name="txtTipoImagen">Opcional: JPG, PNG o WebP \n\t\tMáx. 2 MB</string>
+    <string name="txtInfoMas">Información de su mascota</string>
+    <string name="txtNombre">Nombre:</string>
+    <string name="txtRaza">Raza:</string>
+    <string name="txtTransNombre">¿Cómo se llama?</string>
+    <string name="txtTransRaza">Ej. Golden Retriever o mestizo</string>
+    <string name="txtNacimiento">Año de nacimiento</string>
+    <string name="txtEstirizado1">¿Está esterilizado/a?</string>
+    <string name="txtEsterilizado2">Un dato importante para su cuidado</string>
+    <string name="txtVacunas">Sus vacunas</string>
+    <string name="txtOpcional">Opcional</string>
+    <string name="txtVacunas2">Registra las dosis que ya recibió. También puedes hacerlo más adelante.</string>
+    <string name="txtVacunas3">Cada dosis cuenta</string>
+    <string name="txtVacunas4">Empieza a construir su cartilla digital</string>
+    <string name="btnAgregarVacuna">Agregar vacuna</string>
+    <string name="btnGuardarMascota">Guardar mascota</string>
+    <string name="AlertaGuardado">* Campos obligatorios · Guardado local en SQLite.</string>
 </resources>
