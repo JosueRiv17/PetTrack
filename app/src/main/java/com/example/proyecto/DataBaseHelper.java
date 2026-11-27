@@ -392,4 +392,130 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             db.endTransaction();
         }
     }
+
+    public boolean insertarMascotaConVacunas(int idUsuario, String nombre, String raza, int edadAnios,
+                                             double peso, int esterilizado, int sexo,
+                                             String fotoUri, List<VacunaPendiente> vacunas) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            asegurarUsuarioExistente(db, idUsuario);
+
+            int anioActual = Calendar.getInstance().get(Calendar.YEAR);
+            int anoNacimiento = edadAnios > 0 ? (anioActual - edadAnios) : anioActual;
+
+            ContentValues valuesMascota = new ContentValues();
+            valuesMascota.put("id_usuario", idUsuario);
+            valuesMascota.put("nombre", nombre);
+            valuesMascota.put("raza", raza);
+            valuesMascota.put("ano_nacimiento", anoNacimiento);
+            valuesMascota.put("peso", peso);
+            valuesMascota.put("esterilizado", esterilizado);
+            valuesMascota.put("sexo", sexo);
+            valuesMascota.put("foto", fotoUri);
+
+            long idMascota = db.insert("mascotas", null, valuesMascota);
+            if (idMascota == -1) {
+                return false;
+            }
+
+            if (vacunas != null) {
+                for (VacunaPendiente v : vacunas) {
+                    ContentValues valuesInyeccion = new ContentValues();
+                    valuesInyeccion.put("nombre", v.getNombre());
+                    if (v.getPeriodicidadDias() != null) {
+                        valuesInyeccion.put("periodicidad_dias", v.getPeriodicidadDias());
+                    } else {
+                        valuesInyeccion.putNull("periodicidad_dias");
+                    }
+                    valuesInyeccion.put("folio_lote", v.getFolioLote());
+                    valuesInyeccion.put("numero_registro", v.getNumeroRegistro());
+                    valuesInyeccion.put("descripcion", v.getDescripcion());
+
+                    long idInyeccion = db.insert("inyecciones", null, valuesInyeccion);
+                    if (idInyeccion == -1) {
+                        return false;
+                    }
+
+                    ContentValues valuesHist = new ContentValues();
+                    valuesHist.put("id_mascota", idMascota);
+                    valuesHist.put("id_inyeccion", idInyeccion);
+                    valuesHist.put("fecha_aplicacion", v.getFechaAplicacion());
+                    valuesHist.put("proxima_aplicacion", v.getProximaAplicacion());
+
+                    long idHist = db.insert("historial_vacunacion", null, valuesHist);
+                    if (idHist == -1) {
+                        return false;
+                    }
+                }
+            }
+
+            db.setTransactionSuccessful();
+            return true;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public MascotaDetalle obtenerDetalleMascota(int idMascota) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        MascotaDetalle detalle = null;
+
+        Cursor cMascota = db.rawQuery(
+                "SELECT id_mascota, foto, nombre, raza, ano_nacimiento, peso, esterilizado, sexo " +
+                        "FROM mascotas WHERE id_mascota = ? LIMIT 1",
+                new String[]{String.valueOf(idMascota)}
+        );
+
+        try {
+            if (cMascota.moveToFirst()) {
+                String foto = cMascota.getString(1);
+                String nombre = cMascota.getString(2);
+                String raza = cMascota.getString(3);
+                int anoNacimiento = cMascota.getInt(4);
+                double peso = cMascota.getDouble(5);
+                int esterilizado = cMascota.getInt(6);
+                int sexo = cMascota.getInt(7);
+
+                List<VacunaDetalle> vacunas = new ArrayList<>();
+                Cursor cVacunas = db.rawQuery(
+                        "SELECT i.nombre, i.periodicidad_dias, i.folio_lote, i.numero_registro, " +
+                                "i.descripcion, h.fecha_aplicacion, h.proxima_aplicacion " +
+                                "FROM historial_vacunacion h " +
+                                "INNER JOIN inyecciones i ON h.id_inyeccion = i.id_inyeccion " +
+                                "WHERE h.id_mascota = ? " +
+                                "ORDER BY h.fecha_aplicacion DESC, h.id_historial DESC",
+                        new String[]{String.valueOf(idMascota)}
+                );
+
+                try {
+                    if (cVacunas.moveToFirst()) {
+                        do {
+                            String nombreVac = cVacunas.getString(0);
+                            Integer periodicidad = cVacunas.isNull(1) ? null : cVacunas.getInt(1);
+                            String folio = cVacunas.getString(2);
+                            String numReg = cVacunas.getString(3);
+                            String desc = cVacunas.getString(4);
+                            String fechaAp = cVacunas.getString(5);
+                            String proxAp = cVacunas.getString(6);
+
+                            vacunas.add(new VacunaDetalle(
+                                    nombreVac, periodicidad, folio, numReg, desc, fechaAp, proxAp
+                            ));
+                        } while (cVacunas.moveToNext());
+                    }
+                } finally {
+                    cVacunas.close();
+                }
+
+                detalle = new MascotaDetalle(
+                        idMascota, foto, nombre, raza, anoNacimiento, peso, esterilizado, sexo, vacunas
+                );
+            }
+        } finally {
+            cMascota.close();
+        }
+
+        return detalle;
+    }
 }

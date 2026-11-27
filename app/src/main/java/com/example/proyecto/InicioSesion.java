@@ -35,7 +35,7 @@ public class InicioSesion extends AppCompatActivity {
 
         dbHelper = new DataBaseHelper(this);
 
-
+        // Si el usuario marcó "Recordarme" antes, entra directo
         int idGuardado = getSharedPreferences(PREFS_SESION, MODE_PRIVATE).getInt(KEY_ID_USUARIO, -1);
         if (idGuardado > 0) {
             abrirInicio(idGuardado);

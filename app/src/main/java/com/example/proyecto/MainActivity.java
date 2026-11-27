@@ -136,9 +136,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void cargarCartillasMascotas() {
         List<MascotaCartilla> cartillas = dbHelper.obtenerCartillasPorUsuario(idUsuarioActual);
-        MascotaCartillaAdapter adapter = new MascotaCartillaAdapter(cartillas, mascota ->
-                Toast.makeText(this, "Cartilla de " + mascota.getNombre(), Toast.LENGTH_SHORT).show()
-        );
+        MascotaCartillaAdapter adapter = new MascotaCartillaAdapter(cartillas, mascota -> {
+            Intent intent = new Intent(MainActivity.this, DetalleMascota.class);
+            intent.putExtra("id_mascota", mascota.getIdMascota());
+            startActivity(intent);
+        });
         rvMascotas.setAdapter(adapter);
     }
+
+
 }

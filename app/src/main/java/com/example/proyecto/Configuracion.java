@@ -222,11 +222,11 @@ public class Configuracion extends AppCompatActivity {
                 .setTitle("Cerrar sesión")
                 .setMessage("¿Seguro que quieres salir de tu cuenta?")
                 .setPositiveButton("Cerrar sesión", (d, w) -> {
-
+                    // Borra la sesión guardada por "Recordarme"
                     getSharedPreferences(InicioSesion.PREFS_SESION, MODE_PRIVATE)
                             .edit().remove(InicioSesion.KEY_ID_USUARIO).apply();
 
-
+                    // Regresa al login y limpia la pila de pantallas
                     Intent intent = new Intent(this, InicioSesion.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
