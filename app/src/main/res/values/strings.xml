@@ -23,4 +23,42 @@
     <string name="btnAgregarVacuna">Agregar vacuna</string>
     <string name="btnGuardarMascota">Guardar mascota</string>
     <string name="AlertaGuardado">* Campos obligatorios · Guardado local en SQLite.</string>
+
+    <!-- Inicio de sesión -->
+    <string name="txtNombreApp">Mi Huellita</string>
+    <string name="txtBienvenidaLogin">BIENVENIDO DE NUEVO</string>
+    <string name="txtTituloLogin">Iniciar sesión</string>
+    <string name="txtSubtituloLogin">Tus compañeros te están esperando</string>
+    <string name="txtCorreo">Correo electrónico</string>
+    <string name="txtTransCorreo">ejemplo@correo.com</string>
+    <string name="txtContrasena">Contraseña</string>
+    <string name="txtTransContrasena">Escribe tu contraseña</string>
+    <string name="txtRecordarme">Recordarme</string>
+    <string name="txtOlvideContrasena">¿Olvidaste tu contraseña?</string>
+    <string name="btnIniciarSesion">Iniciar sesión</string>
+    <string name="txtNoTienesCuenta">¿Aún no tienes cuenta?</string>
+    <string name="txtRegistrarse">Regístrate</string>
+    <string name="txtAvisoLogin">Tus datos se guardan de forma local en este dispositivo.</string>
+
+    <!-- Configuración -->
+    <string name="txtEtiquetaAjustes">TU ESPACIO</string>
+    <string name="txtTituloAjustes">Ajustes</string>
+    <string name="txtSubtituloAjustes">Personaliza tu experiencia en Mi Huellita</string>
+    <string name="txtSeccionCuenta">Cuenta</string>
+    <string name="txtEditarPerfil">Editar perfil</string>
+    <string name="txtEditarPerfilDesc">Nombre, correo y dirección</string>
+    <string name="txtCambiarContrasena">Cambiar contraseña</string>
+    <string name="txtCambiarContrasenaDesc">Mantén tu cuenta segura</string>
+    <string name="txtSeccionPreferencias">Preferencias</string>
+    <string name="txtNotificaciones">Notificaciones</string>
+    <string name="txtNotificacionesDesc">Avisos generales de la app</string>
+    <string name="txtRecordatorioVacunas">Recordatorios de vacunas</string>
+    <string name="txtRecordatorioVacunasDesc">Te avisamos antes de la próxima dosis</string>
+    <string name="txtSeccionDatos">Datos y app</string>
+    <string name="txtCompartirApp">Compartir la app</string>
+    <string name="txtCompartirAppDesc">Invítale a cuidar a sus compañeros</string>
+    <string name="txtBorrarDatos">Borrar mis datos</string>
+    <string name="txtBorrarDatosDesc">Elimina mascotas y cartillas guardadas</string>
+    <string name="btnCerrarSesion">Cerrar sesión</string>
+    <string name="txtVersionApp">Mi Huellita · Versión 1.0</string>
 </resources>

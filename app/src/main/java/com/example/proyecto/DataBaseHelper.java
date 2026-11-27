@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -74,6 +77,121 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void onConfigure(SQLiteDatabase db) {
         super.onConfigure(db);
         db.setForeignKeyConstraintsEnabled(true);
+    }
+
+    // ===================== USUARIOS / SESIÓN =====================
+
+    /** Convierte la contraseña a SHA-256 (hex) para no guardarla en texto plano. */
+    public static String hashContrasena(String contrasena) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = md.digest(contrasena.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 no disponible", e);
+        }
+    }
+
+    /**
+     * Registra un usuario nuevo.
+     * @return id del usuario creado, o -1 si el correo ya existe o hubo error.
+     */
+    public long registrarUsuario(String nombre, String correo, String contrasena) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nombre", nombre);
+        values.put("correo", correo.trim().toLowerCase(Locale.ROOT));
+        values.put("direccion", "");
+        values.put("contrasena_hash", hashContrasena(contrasena));
+        return db.insertWithOnConflict("usuarios", null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    /**
+     * Valida correo y contraseña.
+     * @return id del usuario si las credenciales son correctas, o -1 si no.
+     */
+    public int validarUsuario(String correo, String contrasena) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT id_usuario FROM usuarios WHERE correo = ? AND contrasena_hash = ? LIMIT 1",
+                new String[]{correo.trim().toLowerCase(Locale.ROOT), hashContrasena(contrasena)}
+        );
+        try {
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } finally {
+            cursor.close();
+        }
+        return -1;
+    }
+
+    /**
+     * Cambia la contraseña de un usuario verificando su correo y nombre registrado.
+     * @return true si se actualizó, false si no coincide ningún usuario.
+     */
+    public boolean cambiarContrasena(String correo, String nombre, String nuevaContrasena) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("contrasena_hash", hashContrasena(nuevaContrasena));
+        int filas = db.update("usuarios", values,
+                "correo = ? AND LOWER(nombre) = LOWER(?)",
+                new String[]{correo.trim().toLowerCase(Locale.ROOT), nombre.trim()});
+        return filas > 0;
+    }
+
+    // ===================== CONFIGURACIÓN =====================
+
+    /** @return {nombre, correo, direccion} del usuario, o null si no existe. */
+    public String[] obtenerDatosUsuario(int idUsuario) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT nombre, correo, direccion FROM usuarios WHERE id_usuario = ? LIMIT 1",
+                new String[]{String.valueOf(idUsuario)}
+        );
+        try {
+            if (cursor.moveToFirst()) {
+                String direccion = cursor.getString(2);
+                return new String[]{cursor.getString(0), cursor.getString(1), direccion == null ? "" : direccion};
+            }
+        } finally {
+            cursor.close();
+        }
+        return null;
+    }
+
+    /** @return false si el correo ya lo usa otra cuenta. */
+    public boolean actualizarPerfil(int idUsuario, String nombre, String correo, String direccion) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nombre", nombre);
+        values.put("correo", correo.trim().toLowerCase(Locale.ROOT));
+        values.put("direccion", direccion);
+        try {
+            return db.update("usuarios", values, "id_usuario = ?",
+                    new String[]{String.valueOf(idUsuario)}) > 0;
+        } catch (android.database.sqlite.SQLiteConstraintException e) {
+            return false;
+        }
+    }
+
+    /** Cambia la contraseña solo si la actual es correcta. */
+    public boolean cambiarContrasenaPorId(int idUsuario, String actual, String nueva) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("contrasena_hash", hashContrasena(nueva));
+        return db.update("usuarios", values, "id_usuario = ? AND contrasena_hash = ?",
+                new String[]{String.valueOf(idUsuario), hashContrasena(actual)}) > 0;
+    }
+
+    /** Borra todas las mascotas del usuario (su historial se borra en cascada). */
+    public int borrarMascotasUsuario(int idUsuario) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("mascotas", "id_usuario = ?", new String[]{String.valueOf(idUsuario)});
     }
 
     public String obtenerNombreUsuario(int idUsuario) {

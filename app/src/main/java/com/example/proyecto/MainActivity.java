@@ -26,10 +26,11 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private boolean tieneNotificaciones = true;
-    private final int idUsuarioActual = 1;
+    private int idUsuarioActual = -1;
 
     private DataBaseHelper dbHelper;
     private RecyclerView rvMascotas;
+    private TextView txtSaludo;
 
     private final ActivityResultLauncher<Intent> agregarMascotaLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -38,9 +39,26 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    private final ActivityResultLauncher<Intent> configuracionLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    mostrarSaludo();
+                    cargarCartillasMascotas();
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Usuario que inició sesión; si no hay, regresa al login
+        idUsuarioActual = getIntent().getIntExtra("id_usuario", -1);
+        if (idUsuarioActual <= 0) {
+            startActivity(new Intent(this, InicioSesion.class));
+            finish();
+            return;
+        }
+
         WindowCompat.enableEdgeToEdge(getWindow());
         setContentView(R.layout.activity_main);
 
@@ -61,14 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 2. Saludo con nombre de usuario desde SQLite
         dbHelper = new DataBaseHelper(this);
-        TextView txtSaludo = findViewById(R.id.txtSaludo);
-
-        String nombreUsuario = dbHelper.obtenerNombreUsuario(idUsuarioActual);
-        if (nombreUsuario != null && !nombreUsuario.trim().isEmpty()) {
-            txtSaludo.setText("Hola @" + nombreUsuario);
-        } else {
-            txtSaludo.setText("Hola @Usuario");
-        }
+        txtSaludo = findViewById(R.id.txtSaludo);
+        mostrarSaludo();
 
         // 3. Miniaturas de cartillas en RecyclerView
         rvMascotas = findViewById(R.id.rvMascotas);
@@ -79,9 +91,11 @@ public class MainActivity extends AppCompatActivity {
         ImageView ivAjustes = findViewById(R.id.ivAjustes);
         ImageView ivCampana = findViewById(R.id.ivCampana);
 
-        ivAjustes.setOnClickListener(v ->
-                Toast.makeText(this, "Abrir Ajustes", Toast.LENGTH_SHORT).show()
-        );
+        ivAjustes.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, Configuracion.class);
+            intent.putExtra("id_usuario", idUsuarioActual);
+            configuracionLauncher.launch(intent);
+        });
 
         ivCampana.setOnClickListener(v -> {
             if (tieneNotificaciones) {
@@ -109,6 +123,15 @@ public class MainActivity extends AppCompatActivity {
         btnNavCuenta.setOnClickListener(v ->
                 Toast.makeText(this, "Cuenta", Toast.LENGTH_SHORT).show()
         );
+    }
+
+    private void mostrarSaludo() {
+        String nombreUsuario = dbHelper.obtenerNombreUsuario(idUsuarioActual);
+        if (nombreUsuario != null && !nombreUsuario.trim().isEmpty()) {
+            txtSaludo.setText("Hola @" + nombreUsuario);
+        } else {
+            txtSaludo.setText("Hola @Usuario");
+        }
     }
 
     private void cargarCartillasMascotas() {
